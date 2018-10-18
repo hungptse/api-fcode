@@ -241,7 +241,7 @@ public class Account implements Serializable {
     public void setLinkFB(String linkFB) {
         this.linkFB = linkFB;
     }
-    
+        
 
     @Override
     public boolean equals(Object object) {
