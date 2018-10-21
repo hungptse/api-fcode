@@ -80,7 +80,7 @@ public class Account implements Serializable {
     @JoinColumn(name = "RoleId", referencedColumnName = "RoleId")
     @ManyToOne
     private Role roleId;
-    @Column(name = "DayJoin")
+    @Column(name = "DayJoin", updatable = false)
     private String dayJoin;
     @Column(name = "LinkFB")
     private String linkFB;

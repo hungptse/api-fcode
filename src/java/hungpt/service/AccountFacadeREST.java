@@ -6,6 +6,7 @@
 package hungpt.service;
 
 import hungpt.entites.Account;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -40,18 +41,38 @@ public class AccountFacadeREST extends AbstractFacade<Account> {
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public void create(Account entity) {
         super.create(entity);
     }
 
     @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("profile/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public void edit(@PathParam("id") String id, Account entity) {
-        super.edit(entity);
+        getEntityManager().getTransaction().begin();
+        Account existed = find(id);
+        existed.setEmail(entity.getEmail());
+        existed.setLinkFB(entity.getLinkFB());
+        existed.setName(new String(entity.getName().getBytes(),StandardCharsets.UTF_8));    
+        existed.setPhone(entity.getPhone());
+        existed.setGender(entity.getGender());
+        existed.setAddress(entity.getAddress());
+        existed.setDayOfBirth(entity.getDayOfBirth());
+        existed.setAboutMe(new String(entity.getAboutMe().getBytes(),StandardCharsets.UTF_8));
+        getEntityManager().getTransaction().commit();
     }
-
+    
+    @PUT
+    @Path("isActive/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void editIsActive(@PathParam("id") String id, Account entity) {
+        getEntityManager().getTransaction().begin();
+        Account existed = find(id);
+        existed.setIsActive(entity.getIsActive());
+        getEntityManager().getTransaction().commit();
+    }
+    
     @DELETE
     @Path("{id}")
     public void remove(@PathParam("id") String id) {
@@ -69,10 +90,7 @@ public class AccountFacadeREST extends AbstractFacade<Account> {
     @Override
     @Produces(MediaType.APPLICATION_JSON)
     public List<Account> findAll() {
-        System.out.println("A");
-        Query q = getEntityManager().createQuery("SELECT a FROM Account a");
-        List<Account> list = q.getResultList();
-        return list;
+       return super.findAll();
     }
 
     @GET
@@ -93,12 +111,15 @@ public class AccountFacadeREST extends AbstractFacade<Account> {
     @Path("authencation/{stuId}/{password}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getRoleOfAcc(@PathParam("stuId") String stuId, @PathParam("password") String password) {
-        Query q = getEntityManager().createQuery("SELECT a.roleId.roleName FROM Account a WHERE a.studentID = :studentID AND a.password = :password AND a.isActive = 1");
+        Query q = getEntityManager().createQuery("SELECT a.roleId.roleName FROM Account a WHERE a.studentID = :studentID AND a.password = :password");
         q.setParameter("studentID", stuId);
         q.setParameter("password", password);
         return q.getSingleResult().toString();
     }
 
+    
+    
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
