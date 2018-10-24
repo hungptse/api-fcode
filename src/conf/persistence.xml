@@ -8,6 +8,10 @@
     <class>hungpt.entites.News</class>
     <class>hungpt.entites.Event</class>
     <class>hungpt.entites.Course</class>
+    <class>hungpt.entites.EventDetail</class>
+    <class>hungpt.entites.EventType</class>
+    <class>hungpt.entites.EventStatus</class>
+    <class>hungpt.entites.Attendance</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=Fcode"/>
