@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -22,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -35,9 +37,15 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Attendance.findAll", query = "SELECT a FROM Attendance a")
     , @NamedQuery(name = "Attendance.findByAttendanceId", query = "SELECT a FROM Attendance a WHERE a.attendanceId = :attendanceId")
-    , @NamedQuery(name = "Attendance.findByDateEvent", query = "SELECT a FROM Attendance a WHERE a.dateEvent = :dateEvent")
     , @NamedQuery(name = "Attendance.findByIsPresent", query = "SELECT a FROM Attendance a WHERE a.isPresent = :isPresent")})
 public class Attendance implements Serializable {
+
+    @Size(max = 50)
+    @Column(length = 50)
+    private String note;
+    @JoinColumn(name = "EventDetail", referencedColumnName = "EventDetail")
+    @ManyToOne
+    private EventDetail eventDetail;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -45,15 +53,12 @@ public class Attendance implements Serializable {
     @NotNull
     @Column(name = "AttendanceId")
     private Integer attendanceId;
-    @Column(name = "DateEvent")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateEvent;
     @Column(name = "isPresent")
     private Boolean isPresent;
     @OneToMany(mappedBy = "attendanceId")
     private Collection<EventDetail> eventDetailCollection;
     @JoinColumn(name = "StudentID", referencedColumnName = "StudentID")
-    @OneToMany
+    @ManyToMany
     private List<Account> studentID;
 
     public Attendance() {
@@ -71,13 +76,13 @@ public class Attendance implements Serializable {
         this.attendanceId = attendanceId;
     }
 
-    public Date getDateEvent() {
-        return dateEvent;
-    }
-
-    public void setDateEvent(Date dateEvent) {
-        this.dateEvent = dateEvent;
-    }
+//    public Date getDateEvent() {
+//        return dateEvent;
+//    }
+//
+//    public void setDateEvent(Date dateEvent) {
+//        this.dateEvent = dateEvent;
+//    }
 
     public Boolean getIsPresent() {
         return isPresent;
@@ -129,6 +134,22 @@ public class Attendance implements Serializable {
     @Override
     public String toString() {
         return "hungpt.entites.Attendance[ attendanceId=" + attendanceId + " ]";
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public EventDetail getEventDetail() {
+        return eventDetail;
+    }
+
+    public void setEventDetail(EventDetail eventDetail) {
+        this.eventDetail = eventDetail;
     }
 
 }

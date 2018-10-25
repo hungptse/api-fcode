@@ -6,6 +6,7 @@
 package hungpt.entites;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -23,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,6 +38,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EventDetail.findByJointAt", query = "SELECT e FROM EventDetail e WHERE e.jointAt = :jointAt")
     , @NamedQuery(name = "EventDetail.findByEventDetail", query = "SELECT e FROM EventDetail e WHERE e.eventDetail = :eventDetail")})
 public class EventDetail implements Serializable {
+
+    @Column(name = "DateEvent")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateEvent;
+    @OneToMany(mappedBy = "eventDetail")
+    private Collection<Attendance> attendanceCollection;
 
     private static final long serialVersionUID = 1L;
     @Column(name = "JointAt")
@@ -144,6 +152,23 @@ public class EventDetail implements Serializable {
     @Override
     public String toString() {
         return "hungpt.entites.EventDetail[ eventDetail=" + eventDetail + " ]";
+    }
+
+    public Date getDateEvent() {
+        return dateEvent;
+    }
+
+    public void setDateEvent(Date dateEvent) {
+        this.dateEvent = dateEvent;
+    }
+
+    @XmlTransient
+    public Collection<Attendance> getAttendanceCollection() {
+        return attendanceCollection;
+    }
+
+    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
+        this.attendanceCollection = attendanceCollection;
     }
     
 }

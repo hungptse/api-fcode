@@ -6,17 +6,21 @@
 package hungpt.entites;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -39,6 +43,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Account.findByAddress", query = "SELECT a FROM Account a WHERE a.address = :address")
     , @NamedQuery(name = "Account.findByStudentID", query = "SELECT a FROM Account a WHERE a.studentID = :studentID")})
 public class Account implements Serializable {
+
+    @ManyToMany(mappedBy = "studentID")
+    private Collection<Attendance> attendanceCollection;
+    @OneToMany(mappedBy = "postBy")
+    private Collection<Event> eventCollection;
 
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
@@ -259,6 +268,24 @@ public class Account implements Serializable {
     @Override
     public String toString() {
         return "hungpt.entites.Account[ studentID=" + studentID + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Attendance> getAttendanceCollection() {
+        return attendanceCollection;
+    }
+
+    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
+        this.attendanceCollection = attendanceCollection;
+    }
+
+    @XmlTransient
+    public Collection<Event> getEventCollection() {
+        return eventCollection;
+    }
+
+    public void setEventCollection(Collection<Event> eventCollection) {
+        this.eventCollection = eventCollection;
     }
 
 }

@@ -8,6 +8,8 @@ package hungpt.service;
 import hungpt.entites.Attendance;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,11 +26,11 @@ import javax.ws.rs.core.MediaType;
  * @author THANH HUNG
  */
 
-@Path("hungpt.entites.attendance")
+@Path("attendance")
 public class AttendanceFacadeREST extends AbstractFacade<Attendance> {
 
-    @PersistenceContext(unitName = "FcodePU")
-    private EntityManager em;
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("FcodePU");
+    private EntityManager em = emf.createEntityManager();
 
     public AttendanceFacadeREST() {
         super(Attendance.class);
@@ -36,7 +38,7 @@ public class AttendanceFacadeREST extends AbstractFacade<Attendance> {
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public void create(Attendance entity) {
         super.create(entity);
     }

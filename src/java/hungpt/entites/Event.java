@@ -49,6 +49,19 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Event.findByIsSign", query = "SELECT e FROM Event e WHERE e.isSign = :isSign")})
 public class Event implements Serializable {
 
+    @Size(max = 10)
+    @Column(length = 10)
+    private String dateBegin;
+    @Size(max = 10)
+    @Column(length = 10)
+    private String dateEnd;
+    @Size(max = 10)
+    @Column(length = 10)
+    private String dateCreated;
+    @JoinColumn(name = "PostBy", referencedColumnName = "StudentID")
+    @ManyToOne
+    private Account postBy;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -68,15 +81,6 @@ public class Event implements Serializable {
     @Size(max = 50)
     @Column(name = "Banner")
     private String banner;
-    @Column(name = "DateBegin")
-    @Temporal(TemporalType.DATE)
-    private Date dateBegin; 
-    @Column(name = "DateEnd")
-    @Temporal(TemporalType.DATE)
-    private Date dateEnd;
-    @Column(name = "DateCreated")
-    @Temporal(TemporalType.DATE)
-    private Date dateCreated;
     @Column(name = "isSign")
     private Boolean isSign;
     @JoinColumn(name = "StatusID", referencedColumnName = "StatusID")
@@ -87,8 +91,6 @@ public class Event implements Serializable {
     private EventType typeID;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventId")
     private Collection<EventDetail> eventDetailCollection;
-    @Column(name = "PostBy")
-    private String postBy;
     @Column(name = "isPublish")
     private Boolean isPublish;
     public Event() {
@@ -138,29 +140,6 @@ public class Event implements Serializable {
         this.banner = banner;
     }
 
-    public Date getDateBegin() {
-        return dateBegin;
-    }
-
-    public void setDateBegin(Date dateBegin) {
-        this.dateBegin = dateBegin;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
 
     public Boolean getIsSign() {
         return isSign;
@@ -186,13 +165,13 @@ public class Event implements Serializable {
         this.typeID = typeID;
     }
 
-    public String getPostBy() {
-        return postBy;
-    }
-
-    public void setPostBy(String postBy) {
-        this.postBy = postBy;
-    }
+//    public String getPostBy() {
+//        return postBy;
+//    }
+//
+//    public void setPostBy(String postBy) {
+//        this.postBy = postBy;
+//    }
 
     public Boolean getIsPublish() {
         return isPublish;
@@ -237,6 +216,38 @@ public class Event implements Serializable {
     @Override
     public String toString() {
         return "hungpt.entites.Event[ eventId=" + eventId + " ]";
+    }
+
+    public String getDateBegin() {
+        return dateBegin;
+    }
+
+    public void setDateBegin(String dateBegin) {
+        this.dateBegin = dateBegin;
+    }
+
+    public String getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(String dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Account getPostBy() {
+        return postBy;
+    }
+
+    public void setPostBy(Account postBy) {
+        this.postBy = postBy;
     }
     
 }
