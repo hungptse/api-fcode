@@ -25,7 +25,6 @@ import javax.ws.rs.core.MediaType;
  *
  * @author THANH HUNG
  */
-
 @Path("attendance")
 public class AttendanceFacadeREST extends AbstractFacade<Attendance> {
 
@@ -36,11 +35,11 @@ public class AttendanceFacadeREST extends AbstractFacade<Attendance> {
         super(Attendance.class);
     }
 
-    @POST
     @Override
-    @Consumes(MediaType.APPLICATION_JSON)
     public void create(Attendance entity) {
-        super.create(entity);
+        getEntityManager().getTransaction().begin();
+        getEntityManager().persist(entity);
+        getEntityManager().getTransaction().commit();
     }
 
     @PUT
@@ -65,9 +64,9 @@ public class AttendanceFacadeREST extends AbstractFacade<Attendance> {
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Attendance> findAll() {
-        return super.findAll();
+        return getEntityManager().createQuery("SELECT a FROM Attendance a").getResultList();
     }
 
     @GET
@@ -88,5 +87,5 @@ public class AttendanceFacadeREST extends AbstractFacade<Attendance> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }

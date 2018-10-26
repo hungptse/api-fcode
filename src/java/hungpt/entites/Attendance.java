@@ -12,6 +12,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -40,27 +42,24 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Attendance.findByIsPresent", query = "SELECT a FROM Attendance a WHERE a.isPresent = :isPresent")})
 public class Attendance implements Serializable {
 
-    @Size(max = 50)
-    @Column(length = 50)
-    private String note;
-    @JoinColumn(name = "EventDetail", referencedColumnName = "EventDetail")
-    @ManyToOne
-    private EventDetail eventDetail;
-
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "AttendanceId")
     private Integer attendanceId;
     @Column(name = "isPresent")
     private Boolean isPresent;
-    @OneToMany(mappedBy = "attendanceId")
-    private Collection<EventDetail> eventDetailCollection;
-    @JoinColumn(name = "StudentID", referencedColumnName = "StudentID")
-    @ManyToMany
-    private List<Account> studentID;
+    @Column(name = "Note")
+    private String note;
+    @Column(name = "StudentID")
+    private String studentID;
+    @JoinColumn(name = "EventDetail", referencedColumnName = "EventDetail")
+    @ManyToOne
+    private EventDetail eventDetail;
 
+    @Column(name = "isUsed")
+    private Boolean isUsed;
     public Attendance() {
     }
 
@@ -92,24 +91,18 @@ public class Attendance implements Serializable {
         this.isPresent = isPresent;
     }
 
-    public List<Account> getStudentID() {
-        return studentID;
+    public Boolean getIsUsed() {
+        return isUsed;
     }
 
-    public void setStudentID(List<Account> studentID) {
-        this.studentID = studentID;
+    public void setIsUsed(Boolean isUsed) {
+        this.isUsed = isUsed;
     }
 
     
     
-    @XmlTransient
-    public Collection<EventDetail> getEventDetailCollection() {
-        return eventDetailCollection;
-    }
-
-    public void setEventDetailCollection(Collection<EventDetail> eventDetailCollection) {
-        this.eventDetailCollection = eventDetailCollection;
-    }
+    
+    
 
     @Override
     public int hashCode() {
@@ -150,6 +143,15 @@ public class Attendance implements Serializable {
 
     public void setEventDetail(EventDetail eventDetail) {
         this.eventDetail = eventDetail;
+    }
+
+
+    public String getStudentID() {
+        return studentID;
+    }
+
+    public void setStudentID(String studentID) {
+        this.studentID = studentID;
     }
 
 }

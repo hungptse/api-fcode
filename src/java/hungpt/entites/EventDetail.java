@@ -12,6 +12,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -35,47 +37,46 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "EventDetail.findAll", query = "SELECT e FROM EventDetail e")
-    , @NamedQuery(name = "EventDetail.findByJointAt", query = "SELECT e FROM EventDetail e WHERE e.jointAt = :jointAt")
     , @NamedQuery(name = "EventDetail.findByEventDetail", query = "SELECT e FROM EventDetail e WHERE e.eventDetail = :eventDetail")})
 public class EventDetail implements Serializable {
 
+     private static final long serialVersionUID = 1L;
+    
+    @Id
+    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "EventDetail")
+    private Integer eventDetail;
+    @Column(name = "DetailName")
+    private String detailName;
     @Column(name = "DateEvent")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateEvent;
     @OneToMany(mappedBy = "eventDetail")
     private Collection<Attendance> attendanceCollection;
-
-    private static final long serialVersionUID = 1L;
-    @Column(name = "JointAt")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date jointAt;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "EventDetail")
-    private Integer eventDetail;
-    @JoinColumn(name = "AttendanceId", referencedColumnName = "AttendanceId")
+    @JoinColumn(name = "StudentID", referencedColumnName = "StudentID")
     @ManyToOne
-    private Attendance attendanceId;
+    private Account studentID;
     @JoinColumn(name = "EventId", referencedColumnName = "EventId")
     @ManyToOne(optional = false)
     private Event eventId;
-    @Column(name = "DetailName")
-    private String detailName;
+    
+    
+    
     public EventDetail() {
     }
 
     public EventDetail(Integer eventDetail) {
         this.eventDetail = eventDetail;
     }
-
-    public Date getJointAt() {
-        return jointAt;
-    }
-
-    public void setJointAt(Date jointAt) {
-        this.jointAt = jointAt;
-    }
+//
+//    public Date getJointAt() {
+//        return jointAt;
+//    }
+//
+//    public void setJointAt(Date jointAt) {
+//        this.jointAt = jointAt;
+//    }
 
     public Integer getEventDetail() {
         return eventDetail;
@@ -85,14 +86,6 @@ public class EventDetail implements Serializable {
         this.eventDetail = eventDetail;
     }
 
-    public Attendance getAttendanceId() {
-        return attendanceId;
-    }
-
-    public void setAttendanceId(Attendance attendanceId) {
-        this.attendanceId = attendanceId;
-    }
-
     public Event getEventId() {
         return eventId;
     }
@@ -100,6 +93,16 @@ public class EventDetail implements Serializable {
     public void setEventId(Event eventId) {
         this.eventId = eventId;
     }
+
+    public Collection<Attendance> getAttendanceCollection() {
+        return attendanceCollection;
+    }
+
+    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
+        this.attendanceCollection = attendanceCollection;
+    }
+    
+    
 
 //    public Account getStudentID() {
 //        return studentID;
@@ -161,14 +164,22 @@ public class EventDetail implements Serializable {
     public void setDateEvent(Date dateEvent) {
         this.dateEvent = dateEvent;
     }
+//
+//    @XmlTransient
+//    public Collection<Attendance> getAttendanceCollection() {
+//        return attendanceCollection;
+//    }
+//
+//    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
+//        this.attendanceCollection = attendanceCollection;
+//    }
 
-    @XmlTransient
-    public Collection<Attendance> getAttendanceCollection() {
-        return attendanceCollection;
+    public Account getStudentID() {
+        return studentID;
     }
 
-    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
-        this.attendanceCollection = attendanceCollection;
+    public void setStudentID(Account studentID) {
+        this.studentID = studentID;
     }
     
 }

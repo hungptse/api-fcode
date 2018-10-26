@@ -49,15 +49,14 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Event.findByIsSign", query = "SELECT e FROM Event e WHERE e.isSign = :isSign")})
 public class Event implements Serializable {
 
-    @Size(max = 10)
-    @Column(length = 10)
-    private String dateBegin;
-    @Size(max = 10)
-    @Column(length = 10)
-    private String dateEnd;
-    @Size(max = 10)
-    @Column(length = 10)
-    private String dateCreated;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateBegin;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateEnd;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreated;
+
+
     @JoinColumn(name = "PostBy", referencedColumnName = "StudentID")
     @ManyToOne
     private Account postBy;
@@ -218,36 +217,37 @@ public class Event implements Serializable {
         return "hungpt.entites.Event[ eventId=" + eventId + " ]";
     }
 
-    public String getDateBegin() {
-        return dateBegin;
-    }
-
-    public void setDateBegin(String dateBegin) {
-        this.dateBegin = dateBegin;
-    }
-
-    public String getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(String dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
-    public String getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(String dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
+   
     public Account getPostBy() {
         return postBy;
     }
 
     public void setPostBy(Account postBy) {
         this.postBy = postBy;
+    }
+
+    public Date getDateBegin() {
+        return dateBegin;
+    }
+
+    public void setDateBegin(Date dateBegin) {
+        this.dateBegin = dateBegin;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
     
 }

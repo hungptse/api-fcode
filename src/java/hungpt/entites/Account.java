@@ -7,6 +7,7 @@ package hungpt.entites;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,13 +40,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Account.findByPhone", query = "SELECT a FROM Account a WHERE a.phone = :phone")
     , @NamedQuery(name = "Account.findByDayOfBirth", query = "SELECT a FROM Account a WHERE a.dayOfBirth = :dayOfBirth")
     , @NamedQuery(name = "Account.findByAvatar", query = "SELECT a FROM Account a WHERE a.avatar = :avatar")
-    , @NamedQuery(name = "Account.findByImageStudentCard", query = "SELECT a FROM Account a WHERE a.imageStudentCard = :imageStudentCard")
     , @NamedQuery(name = "Account.findByAddress", query = "SELECT a FROM Account a WHERE a.address = :address")
     , @NamedQuery(name = "Account.findByStudentID", query = "SELECT a FROM Account a WHERE a.studentID = :studentID")})
 public class Account implements Serializable {
 
-    @ManyToMany(mappedBy = "studentID")
-    private Collection<Attendance> attendanceCollection;
+    @OneToMany(mappedBy = "studentID")
+    private List<EventDetail> eventDetailList;
+
     @OneToMany(mappedBy = "postBy")
     private Collection<Event> eventCollection;
 
@@ -69,8 +70,6 @@ public class Account implements Serializable {
     private String dayOfBirth;
     @Column(name = "Avatar")
     private String avatar;
-    @Column(name = "ImageStudentCard")
-    private String imageStudentCard;
     @Column(name = "Address")
     private String address;
     @Lob
@@ -172,13 +171,6 @@ public class Account implements Serializable {
         this.avatar = avatar;
     }
 
-    public String getImageStudentCard() {
-        return imageStudentCard;
-    }
-
-    public void setImageStudentCard(String imageStudentCard) {
-        this.imageStudentCard = imageStudentCard;
-    }
 
     public String getAddress() {
         return address;
@@ -270,14 +262,6 @@ public class Account implements Serializable {
         return "hungpt.entites.Account[ studentID=" + studentID + " ]";
     }
 
-    @XmlTransient
-    public Collection<Attendance> getAttendanceCollection() {
-        return attendanceCollection;
-    }
-
-    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
-        this.attendanceCollection = attendanceCollection;
-    }
 
     @XmlTransient
     public Collection<Event> getEventCollection() {
@@ -286,6 +270,15 @@ public class Account implements Serializable {
 
     public void setEventCollection(Collection<Event> eventCollection) {
         this.eventCollection = eventCollection;
+    }
+
+    @XmlTransient
+    public List<EventDetail> getEventDetailList() {
+        return eventDetailList;
+    }
+
+    public void setEventDetailList(List<EventDetail> eventDetailList) {
+        this.eventDetailList = eventDetailList;
     }
 
 }

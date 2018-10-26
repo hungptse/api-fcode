@@ -5,6 +5,7 @@
  */
 package hungpt.service;
 
+import hungpt.entites.Attendance;
 import hungpt.entites.EventDetail;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -25,8 +26,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author THANH HUNG
  */
-
-@Path("hungpt.entites.eventdetail")
+@Path("eventDetail")
 public class EventDetailFacadeREST extends AbstractFacade<EventDetail> {
 
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("FcodePU");
@@ -37,10 +37,20 @@ public class EventDetailFacadeREST extends AbstractFacade<EventDetail> {
     }
 
     @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(EventDetail entity) {
-        super.create(entity);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void create(List<EventDetail> list) {
+        getEntityManager().getTransaction().begin();
+        for (EventDetail entity : list) {
+            getEntityManager().persist(entity);
+            Attendance a = new Attendance();
+            a.setIsPresent(false);
+            a.setNote("");
+            a.setStudentID(entity.getStudentID().getStudentID());
+            a.setEventDetail(entity);
+            a.setIsUsed(false);
+            getEntityManager().persist(a);
+        }
+        getEntityManager().getTransaction().commit();
     }
 
     @PUT
@@ -58,14 +68,14 @@ public class EventDetailFacadeREST extends AbstractFacade<EventDetail> {
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public EventDetail find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public List<EventDetail> findAll() {
         return super.findAll();
     }
@@ -88,5 +98,5 @@ public class EventDetailFacadeREST extends AbstractFacade<EventDetail> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }
