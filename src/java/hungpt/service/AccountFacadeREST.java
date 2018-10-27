@@ -83,7 +83,14 @@ public class AccountFacadeREST extends AbstractFacade<Account> {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Account find(@PathParam("id") String id) {
-        return super.find(id);
+        return (Account) getEntityManager().createNamedQuery("Account.findByStudentID").setParameter("studentID", id).getSingleResult();
+    }
+    
+    @GET
+    @Path("notNew")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Account> findMemberNotNew() {
+        return getEntityManager().createQuery("SELECT a FROM Account a WHERE a.roleId.roleId <> 5").getResultList();
     }
 
     @GET

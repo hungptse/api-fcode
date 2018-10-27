@@ -6,9 +6,6 @@
 package hungpt.entites;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,18 +13,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -39,27 +31,33 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Attendance.findAll", query = "SELECT a FROM Attendance a")
     , @NamedQuery(name = "Attendance.findByAttendanceId", query = "SELECT a FROM Attendance a WHERE a.attendanceId = :attendanceId")
-    , @NamedQuery(name = "Attendance.findByIsPresent", query = "SELECT a FROM Attendance a WHERE a.isPresent = :isPresent")})
+    , @NamedQuery(name = "Attendance.findByIsPresent", query = "SELECT a FROM Attendance a WHERE a.isPresent = :isPresent")
+    , @NamedQuery(name = "Attendance.findByNote", query = "SELECT a FROM Attendance a WHERE a.note = :note")
+    , @NamedQuery(name = "Attendance.findByIsUsed", query = "SELECT a FROM Attendance a WHERE a.isUsed = :isUsed")})
 public class Attendance implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AttendanceId")
     private Integer attendanceId;
     @Column(name = "isPresent")
     private Boolean isPresent;
+    @Size(max = 50)
     @Column(name = "Note")
     private String note;
-    @Column(name = "StudentID")
-    private String studentID;
+    @Column(name = "isUsed")
+    private Boolean isUsed;
     @JoinColumn(name = "EventDetail", referencedColumnName = "EventDetail")
     @ManyToOne
     private EventDetail eventDetail;
 
-    @Column(name = "isUsed")
-    private Boolean isUsed;
+    @JoinColumn(name = "StudentID", referencedColumnName = "StudentID")
+    @ManyToOne
+    private Account studentID;
+
     public Attendance() {
     }
 
@@ -75,20 +73,20 @@ public class Attendance implements Serializable {
         this.attendanceId = attendanceId;
     }
 
-//    public Date getDateEvent() {
-//        return dateEvent;
-//    }
-//
-//    public void setDateEvent(Date dateEvent) {
-//        this.dateEvent = dateEvent;
-//    }
-
     public Boolean getIsPresent() {
         return isPresent;
     }
 
     public void setIsPresent(Boolean isPresent) {
         this.isPresent = isPresent;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public Boolean getIsUsed() {
@@ -99,10 +97,21 @@ public class Attendance implements Serializable {
         this.isUsed = isUsed;
     }
 
-    
-    
-    
-    
+    public EventDetail getEventDetail() {
+        return eventDetail;
+    }
+
+    public void setEventDetail(EventDetail eventDetail) {
+        this.eventDetail = eventDetail;
+    }
+
+    public Account getStudentID() {
+        return studentID;
+    }
+
+    public void setStudentID(Account studentID) {
+        this.studentID = studentID;
+    }
 
     @Override
     public int hashCode() {
@@ -126,32 +135,7 @@ public class Attendance implements Serializable {
 
     @Override
     public String toString() {
-        return "hungpt.entites.Attendance[ attendanceId=" + attendanceId + " ]";
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public EventDetail getEventDetail() {
-        return eventDetail;
-    }
-
-    public void setEventDetail(EventDetail eventDetail) {
-        this.eventDetail = eventDetail;
-    }
-
-
-    public String getStudentID() {
-        return studentID;
-    }
-
-    public void setStudentID(String studentID) {
-        this.studentID = studentID;
+        return "h.Attendance[ attendanceId=" + attendanceId + " ]";
     }
 
 }

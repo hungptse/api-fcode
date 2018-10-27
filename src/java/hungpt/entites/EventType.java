@@ -99,7 +99,7 @@ public class EventType implements Serializable {
 
     @Override
     public String toString() {
-        return "hungpt.entites.EventType[ typeID=" + typeID + " ]";
+        return "h.EventType[ typeID=" + typeID + " ]";
     }
     
 }

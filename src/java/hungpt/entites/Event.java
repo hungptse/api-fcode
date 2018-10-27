@@ -20,7 +20,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,27 +45,16 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Event.findByDateBegin", query = "SELECT e FROM Event e WHERE e.dateBegin = :dateBegin")
     , @NamedQuery(name = "Event.findByDateEnd", query = "SELECT e FROM Event e WHERE e.dateEnd = :dateEnd")
     , @NamedQuery(name = "Event.findByDateCreated", query = "SELECT e FROM Event e WHERE e.dateCreated = :dateCreated")
-    , @NamedQuery(name = "Event.findByIsSign", query = "SELECT e FROM Event e WHERE e.isSign = :isSign")})
+    , @NamedQuery(name = "Event.findByIsSign", query = "SELECT e FROM Event e WHERE e.isSign = :isSign")
+    , @NamedQuery(name = "Event.findByIsPublish", query = "SELECT e FROM Event e WHERE e.isPublish = :isPublish")})
 public class Event implements Serializable {
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateBegin;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateEnd;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated;
-
-
-    @JoinColumn(name = "PostBy", referencedColumnName = "StudentID")
-    @ManyToOne
-    private Account postBy;
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "EventId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "EventId")
     private Integer eventId;
     @Size(max = 50)
     @Column(name = "EventName")
@@ -80,18 +68,31 @@ public class Event implements Serializable {
     @Size(max = 50)
     @Column(name = "Banner")
     private String banner;
+    @Column(name = "DateBegin")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateBegin;
+    @Column(name = "DateEnd")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateEnd;
+    @Column(name = "DateCreated")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreated;
     @Column(name = "isSign")
     private Boolean isSign;
+    @Column(name = "isPublish")
+    private Boolean isPublish;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
+    private Collection<AccountEvent> accountEventCollection;
+    @JoinColumn(name = "PostBy", referencedColumnName = "StudentID")
+    @ManyToOne
+    private Account postBy;
     @JoinColumn(name = "StatusID", referencedColumnName = "StatusID")
     @ManyToOne
     private EventStatus statusID;
     @JoinColumn(name = "TypeID", referencedColumnName = "TypeID")
     @ManyToOne
     private EventType typeID;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventId")
-    private Collection<EventDetail> eventDetailCollection;
-    @Column(name = "isPublish")
-    private Boolean isPublish;
+
     public Event() {
     }
 
@@ -139,6 +140,29 @@ public class Event implements Serializable {
         this.banner = banner;
     }
 
+    public Date getDateBegin() {
+        return dateBegin;
+    }
+
+    public void setDateBegin(Date dateBegin) {
+        this.dateBegin = dateBegin;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
     public Boolean getIsSign() {
         return isSign;
@@ -146,6 +170,31 @@ public class Event implements Serializable {
 
     public void setIsSign(Boolean isSign) {
         this.isSign = isSign;
+    }
+
+    public Boolean getIsPublish() {
+        return isPublish;
+    }
+
+    public void setIsPublish(Boolean isPublish) {
+        this.isPublish = isPublish;
+    }
+
+    @XmlTransient
+    public Collection<AccountEvent> getAccountEventCollection() {
+        return accountEventCollection;
+    }
+
+    public void setAccountEventCollection(Collection<AccountEvent> accountEventCollection) {
+        this.accountEventCollection = accountEventCollection;
+    }
+
+    public Account getPostBy() {
+        return postBy;
+    }
+
+    public void setPostBy(Account postBy) {
+        this.postBy = postBy;
     }
 
     public EventStatus getStatusID() {
@@ -162,34 +211,6 @@ public class Event implements Serializable {
 
     public void setTypeID(EventType typeID) {
         this.typeID = typeID;
-    }
-
-//    public String getPostBy() {
-//        return postBy;
-//    }
-//
-//    public void setPostBy(String postBy) {
-//        this.postBy = postBy;
-//    }
-
-    public Boolean getIsPublish() {
-        return isPublish;
-    }
-
-    public void setIsPublish(Boolean isPublish) {
-        this.isPublish = isPublish;
-    }
-
-    
-
-    
-    @XmlTransient
-    public Collection<EventDetail> getEventDetailCollection() {
-        return eventDetailCollection;
-    }
-
-    public void setEventDetailCollection(Collection<EventDetail> eventDetailCollection) {
-        this.eventDetailCollection = eventDetailCollection;
     }
 
     @Override
@@ -214,40 +235,7 @@ public class Event implements Serializable {
 
     @Override
     public String toString() {
-        return "hungpt.entites.Event[ eventId=" + eventId + " ]";
-    }
-
-   
-    public Account getPostBy() {
-        return postBy;
-    }
-
-    public void setPostBy(Account postBy) {
-        this.postBy = postBy;
-    }
-
-    public Date getDateBegin() {
-        return dateBegin;
-    }
-
-    public void setDateBegin(Date dateBegin) {
-        this.dateBegin = dateBegin;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+        return "h.Event[ eventId=" + eventId + " ]";
     }
     
 }

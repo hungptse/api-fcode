@@ -7,19 +7,20 @@ package hungpt.entites;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -33,7 +34,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Account.findAll", query = "SELECT a FROM Account a")
     , @NamedQuery(name = "Account.findByEmail", query = "SELECT a FROM Account a WHERE a.email = :email")
-    , @NamedQuery(name = "Account.findByIDNPassword", query = "SELECT a FROM Account a WHERE a.password = :password AND a.studentID = :studentID")
     , @NamedQuery(name = "Account.findByName", query = "SELECT a FROM Account a WHERE a.name = :name")
     , @NamedQuery(name = "Account.findByIsActive", query = "SELECT a FROM Account a WHERE a.isActive = :isActive")
     , @NamedQuery(name = "Account.findByGender", query = "SELECT a FROM Account a WHERE a.gender = :gender")
@@ -41,44 +41,59 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Account.findByDayOfBirth", query = "SELECT a FROM Account a WHERE a.dayOfBirth = :dayOfBirth")
     , @NamedQuery(name = "Account.findByAvatar", query = "SELECT a FROM Account a WHERE a.avatar = :avatar")
     , @NamedQuery(name = "Account.findByAddress", query = "SELECT a FROM Account a WHERE a.address = :address")
-    , @NamedQuery(name = "Account.findByStudentID", query = "SELECT a FROM Account a WHERE a.studentID = :studentID")})
+    , @NamedQuery(name = "Account.findByStudentID", query = "SELECT a FROM Account a WHERE a.studentID = :studentID")
+    , @NamedQuery(name = "Account.findByDayJoin", query = "SELECT a FROM Account a WHERE a.dayJoin = :dayJoin")
+    , @NamedQuery(name = "Account.findByLinkFB", query = "SELECT a FROM Account a WHERE a.linkFB = :linkFB")})
 public class Account implements Serializable {
 
-    @OneToMany(mappedBy = "studentID")
-    private List<EventDetail> eventDetailList;
-
-    @OneToMany(mappedBy = "postBy")
-    private Collection<Event> eventCollection;
-
     private static final long serialVersionUID = 1L;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "Email")
     private String email;
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "Password")
     private String password;
+    @Size(max = 50)
     @Column(name = "Name")
     private String name;
     @Column(name = "IsActive")
     private Boolean isActive;
     @Basic(optional = false)
+    @NotNull
     @Column(name = "Gender")
     private boolean gender;
     @Column(name = "Phone")
     private Long phone;
+    @Size(max = 10)
     @Column(name = "DayOfBirth")
     private String dayOfBirth;
+    @Size(max = 50)
     @Column(name = "Avatar")
     private String avatar;
+    @Size(max = 50)
     @Column(name = "Address")
     private String address;
     @Lob
+    @Size(max = 2147483647)
     @Column(name = "AboutMe")
     private String aboutMe;
     @Id
     @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "StudentID")
     private String studentID;
+    @Size(max = 10)
+    @Column(name = "DayJoin")
+    private String dayJoin;
+    @Size(max = 50)
+    @Column(name = "LinkFB")
+    private String linkFB;
     @JoinColumn(name = "CourseId", referencedColumnName = "CourseId")
     @ManyToOne
     private Course courseId;
@@ -88,11 +103,14 @@ public class Account implements Serializable {
     @JoinColumn(name = "RoleId", referencedColumnName = "RoleId")
     @ManyToOne
     private Role roleId;
-    @Column(name = "DayJoin", updatable = false)
-    private String dayJoin;
-    @Column(name = "LinkFB")
-    private String linkFB;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
+    private Collection<AccountEvent> accountEventCollection;
+    @OneToMany(mappedBy = "postBy")
+    private Collection<Event> eventCollection;
 
+     @OneToMany(mappedBy = "studentID")
+    private Collection<Attendance> attendanceCollection;
+    
     public Account() {
     }
 
@@ -171,7 +189,6 @@ public class Account implements Serializable {
         this.avatar = avatar;
     }
 
-
     public String getAddress() {
         return address;
     }
@@ -194,6 +211,22 @@ public class Account implements Serializable {
 
     public void setStudentID(String studentID) {
         this.studentID = studentID;
+    }
+
+    public String getDayJoin() {
+        return dayJoin;
+    }
+
+    public void setDayJoin(String dayJoin) {
+        this.dayJoin = dayJoin;
+    }
+
+    public String getLinkFB() {
+        return linkFB;
+    }
+
+    public void setLinkFB(String linkFB) {
+        this.linkFB = linkFB;
     }
 
     public Course getCourseId() {
@@ -220,6 +253,24 @@ public class Account implements Serializable {
         this.roleId = roleId;
     }
 
+    @XmlTransient
+    public Collection<AccountEvent> getAccountEventCollection() {
+        return accountEventCollection;
+    }
+
+    public void setAccountEventCollection(Collection<AccountEvent> accountEventCollection) {
+        this.accountEventCollection = accountEventCollection;
+    }
+
+    @XmlTransient
+    public Collection<Event> getEventCollection() {
+        return eventCollection;
+    }
+
+    public void setEventCollection(Collection<Event> eventCollection) {
+        this.eventCollection = eventCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -227,23 +278,16 @@ public class Account implements Serializable {
         return hash;
     }
 
-    public String getDayJoin() {
-        return dayJoin;
+    public Collection<Attendance> getAttendanceCollection() {
+        return attendanceCollection;
     }
 
-    public void setDayJoin(String dayJoin) {
-        this.dayJoin = dayJoin;
+    public void setAttendanceCollection(Collection<Attendance> attendanceCollection) {
+        this.attendanceCollection = attendanceCollection;
     }
 
-    public String getLinkFB() {
-        return linkFB;
-    }
-
-    public void setLinkFB(String linkFB) {
-        this.linkFB = linkFB;
-    }
-        
-
+    
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -259,26 +303,7 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "hungpt.entites.Account[ studentID=" + studentID + " ]";
+        return "h.Account[ studentID=" + studentID + " ]";
     }
-
-
-    @XmlTransient
-    public Collection<Event> getEventCollection() {
-        return eventCollection;
-    }
-
-    public void setEventCollection(Collection<Event> eventCollection) {
-        this.eventCollection = eventCollection;
-    }
-
-    @XmlTransient
-    public List<EventDetail> getEventDetailList() {
-        return eventDetailList;
-    }
-
-    public void setEventDetailList(List<EventDetail> eventDetailList) {
-        this.eventDetailList = eventDetailList;
-    }
-
+    
 }

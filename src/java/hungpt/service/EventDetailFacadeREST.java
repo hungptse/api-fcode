@@ -5,8 +5,12 @@
  */
 package hungpt.service;
 
+import hungpt.entites.Account;
+import hungpt.entites.AccountEvent;
+import hungpt.entites.AccountEventPK;
 import hungpt.entites.Attendance;
 import hungpt.entites.EventDetail;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,18 +42,28 @@ public class EventDetailFacadeREST extends AbstractFacade<EventDetail> {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create(List<EventDetail> list) {
+    @Override
+    public void create(EventDetail entity) {
         getEntityManager().getTransaction().begin();
-        for (EventDetail entity : list) {
-            getEntityManager().persist(entity);
+        int id = entity.getAccountEvent().getEvent().getEventId();
+        List<AccountEvent> accountEvent = new AccountEventFacadeREST().getAllAccountByEventID(id);
+
+        EventDetail ed = new EventDetail();
+        ed.setAccountEvent(accountEvent.get(0));
+        ed.setDateEvent(entity.getDateEvent());
+        ed.setDetailName(entity.getDetailName());
+        getEntityManager().persist(ed);
+        getEntityManager().flush();
+        for (AccountEvent ae : accountEvent) {
             Attendance a = new Attendance();
+            a.setEventDetail(ed);
+            a.setIsUsed(false);
             a.setIsPresent(false);
             a.setNote("");
-            a.setStudentID(entity.getStudentID().getStudentID());
-            a.setEventDetail(entity);
-            a.setIsUsed(false);
+            a.setStudentID(ae.getAccount());
             getEntityManager().persist(a);
         }
+
         getEntityManager().getTransaction().commit();
     }
 
@@ -68,9 +82,10 @@ public class EventDetailFacadeREST extends AbstractFacade<EventDetail> {
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public EventDetail find(@PathParam("id") Integer id) {
-        return super.find(id);
+//        return super.find(id);
+        return (EventDetail) getEntityManager().createNamedQuery("EventDetail.findByEventDetail").setParameter("eventDetail", id).getSingleResult();
     }
 
     @GET

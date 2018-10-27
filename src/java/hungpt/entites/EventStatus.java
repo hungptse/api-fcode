@@ -99,7 +99,7 @@ public class EventStatus implements Serializable {
 
     @Override
     public String toString() {
-        return "hungpt.entites.EventStatus[ statusID=" + statusID + " ]";
+        return "h.EventStatus[ statusID=" + statusID + " ]";
     }
     
 }
